@@ -108,8 +108,6 @@ function installFrontend(){
 
     Import-Module WebAdministration
 
-    Get-Website | Remove-Website
-
     (Get-Content .\Frontend\sumz\main*.js).Replace('http://sumz1718.dh-karlsruhe.de:8080', 'http://localhost:8080') | Set-Content .\Frontend\sumz\main*.js
 
     Copy-Item -Path ".\Frontend\*" -Recurse -Destination $env:HOMEDRIVE\inetpub\wwwroot -Force
@@ -125,12 +123,14 @@ function enableIIS(){
 
     Write-Host "Installiere Webserver (IIS)..."
 
-    $features = Get-WindowsOptionalFeature -Online | where FeatureName -like 'IIS-*'
+    $features = Get-WindowsOptionalFeature -Online | where{$_.FeatureName -like 'IIS-*' -and $_.State -eq "Disabled"}
 
     foreach($feature in $features){
-      Enable-WindowsOptionalFeature -Online -FeatureName "$($feature.FeatureName)" -all
-    
+
+            Enable-WindowsOptionalFeature -Online -FeatureName "$($feature.FeatureName)" -all
     }
+
+    Get-Website | Where {$_.Name -ne "Frontend" -and $_.Name -ne "Backend-Python"} | Remove-Website
 
     Write-Host "IIS installation abgeschlossen"
 
@@ -170,7 +170,7 @@ function installPythonBackend(){
     pip install pmdarima
     pip install jsonschema
     pip install jsonref
-    pip isntall enum
+    pip install enum
     pip install statsmodels 
 
     Write-Host "Berechtige IIS User für Abhängigkeiten"
@@ -199,7 +199,7 @@ Write-Host "Dies ist der business horizon installer. Bitte das Skript als Admini
 $input = ""
 while($input -ne "q"){
 
-    Write-Host "Verfügbare Aktionen:"
+    Write-Host "Verfügbare Aktionen:" -ForegroundColor Yellow
     Write-Host "Java-Backend installieren [1]"
     Write-Host "Python-Backend installieren [2]"
     Write-Host "Frontend installieren [3]"
