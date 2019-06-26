@@ -1,0 +1,9 @@
+<service>
+  <id>sumzBackendService</id>
+  <log mode="append" />
+  <name>sumzBackendService</name>
+  <description>Service fuer SUMZ-Backend</description>
+  <executable>java</executable>
+  <arguments>-jar "./businesshorizon2-0.0.1-SNAPSHOT.jar --spring.datasource.url='jdbc:sqlserver://SUMZ1718:1433;instanceName=SQLEXPRESS;databaseName=sumzdb;integratedSecurity=false;user=sa;password=sumz1718;' --spring.jpa.hibernate.ddl-auto='validate' --spring.mail.host='smtp.dh-karlsruhe.de' --spring.mail.username='noreplyBUSINESSHORIZON@dh-karlsruhe.de' --spring.mail.password=''"</arguments>
+  <interactive />
+</service>
