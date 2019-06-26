@@ -1,29 +1,3 @@
-Write-Host "Dies ist der business horizon installer. Bitte das Skript als Administrator ausführen" -ForegroundColor Green
-
-$input = ""
-while($input -ne "q"){
-
-    Write-Host "Verfügbare Aktionen:"
-    Write-Host "Java-Backend installieren [1]"
-    Write-Host "Python-Backend installieren [2]"
-    Write-Host "Frontend installieren [3]"
-
-    $input = Read-Host "Zum Ausführen einer Aktionen die entsprechende Zahl eingeben. Zum Verlassen [q] eingeben"
-
-    if($input -eq "1"){
-    
-        installJavaBackend
-
-    } elseif ($input -eq "2"){
-    
-        installPythonBackend
-    
-    }elseif ($input -eq "3"){
-    
-        installFrontend
-    }
-
-}
 
 function installJavaBackend(){
 
@@ -65,20 +39,21 @@ function installJavaBackend(){
     $smtpPassword = Read-Host "Bitte geben Sie Password des SMTP-Servers ein: (Drücken Sie Enter um den Standardwert [] zu akzeptieren)"
     if($smtpPassword -eq ""){$smtpPassword = ""}
 
-    $pythonURL = "--sumz.client.host='sumz1718.dh-karlsruhe.de'"
+    $frontend = "--sumz.client.host=http://localhost"
+    $python = "--prediction.backend.host=http://localhost:5000/predict"
 
     $dbConn = "jdbc:sqlserver://$($dbURL):$($dbPort);instanceName=SQLEXPRESS;databaseName=$($dbName);integratedSecurity=false;user=$($dbUsername);password=$($dbPassword);"
 
     $jarPath = "./businesshorizon2-0.0.1-SNAPSHOT.jar"
-    $datasource = "--spring.datasource.url='$($dbConn)'"
-    $dbStrategy = "--spring.jpa.hibernate.ddl-auto='validate'"
+    $datasource = "--spring.datasource.url=$($dbConn)"
+    $dbStrategy = "--spring.jpa.hibernate.ddl-auto=validate"
 
-    $mailHost = "--spring.mail.host='$($smtpUrl)'"
-    $mailPort = "--spring.mail.port='$($smtpPort)'"
-    $mailUser = "--spring.mail.username='$($smtpUsername)'"
-    $mailPassword = "--spring.mail.password='$($smtpPassword)'"
+    $mailHost = "--spring.mail.host=$($smtpUrl)"
+    $mailPort = "--spring.mail.port=$($smtpPort)"
+    $mailUser = "--spring.mail.username=$($smtpUsername)"
+    $mailPassword = "--spring.mail.password=$($smtpPassword)"
 
-    $args = "-jar `"$($jarPath) $($datasource) $($dbStrategy) $($mailHost) $($mailUser) $($mailPassword) $($pythonURL)`""
+    $args = "-jar $($jarPath) `"$($datasource) $($dbStrategy) $($mailHost) $($mailUser) $($mailPassword) $($python) $($frontend)`""
 
     $config = New-Object System.Xml.XmlDocument
     $config.Load("$(Get-Location)\JavaBackend\sumzBackendService.xml")
@@ -109,6 +84,10 @@ function installJavaBackend(){
     $service = Get-Service "sumzBackendService"
 
     Write-Host "Java-Backend wurde erfolgreich installiert. Servicename: $($service.DisplayName)"
+
+    Write-Host "Starte Service"
+
+    $service.Start()
 
 
 }
@@ -172,6 +151,8 @@ function installPythonBackend(){
 
     enableIIS
 
+    Import-Module WebAdministration
+
     $pythonPath = [System.IO.DirectoryInfo] (Read-Host "Bitte geben Sie den Pfad zur python.exe ein")
 
     while($pythonPath.Name -ne "python.exe"){
@@ -210,5 +191,32 @@ function installPythonBackend(){
     New-WebHandler -Name "FastCgi" -PSPath "IIS:\Sites\Backend-Python" -Path "*" -Modules "FastCgiModule" -ScriptProcessor "$($pythonPath)|c:\inetpub\wwwroot\wfastcgi.py"  -ResourceType Unspecified -Verb *
 
     Write-Host "Webseite erstellt. Installation des Python-Backends abgeschlossen"
+
+}
+
+Write-Host "Dies ist der business horizon installer. Bitte das Skript als Administrator ausführen" -ForegroundColor Green
+
+$input = ""
+while($input -ne "q"){
+
+    Write-Host "Verfügbare Aktionen:"
+    Write-Host "Java-Backend installieren [1]"
+    Write-Host "Python-Backend installieren [2]"
+    Write-Host "Frontend installieren [3]"
+
+    $input = Read-Host "Zum Ausführen einer Aktionen die entsprechende Zahl eingeben. Zum Verlassen [q] eingeben"
+
+    if($input -eq "1"){
+    
+        installJavaBackend
+
+    } elseif ($input -eq "2"){
+    
+        installPythonBackend
+    
+    }elseif ($input -eq "3"){
+    
+        installFrontend
+    }
 
 }
