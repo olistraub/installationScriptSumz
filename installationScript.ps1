@@ -65,6 +65,8 @@ function installJavaBackend(){
     $smtpPassword = Read-Host "Bitte geben Sie Password des SMTP-Servers ein: (Drücken Sie Enter um den Standardwert [] zu akzeptieren)"
     if($smtpPassword -eq ""){$smtpPassword = ""}
 
+    $pythonURL = "--sumz.client.host='sumz1718.dh-karlsruhe.de'"
+
     $dbConn = "jdbc:sqlserver://$($dbURL):$($dbPort);instanceName=SQLEXPRESS;databaseName=$($dbName);integratedSecurity=false;user=$($dbUsername);password=$($dbPassword);"
 
     $jarPath = "./businesshorizon2-0.0.1-SNAPSHOT.jar"
@@ -76,7 +78,7 @@ function installJavaBackend(){
     $mailUser = "--spring.mail.username='$($smtpUsername)'"
     $mailPassword = "--spring.mail.password='$($smtpPassword)'"
 
-    $args = "-jar `"$($jarPath) $($datasource) $($dbStrategy) $($mailHost) $($mailUser) $($mailPassword)`""
+    $args = "-jar `"$($jarPath) $($datasource) $($dbStrategy) $($mailHost) $($mailUser) $($mailPassword) $($pythonURL)`""
 
     $config = New-Object System.Xml.XmlDocument
     $config.Load("$(Get-Location)\JavaBackend\sumzBackendService.xml")
