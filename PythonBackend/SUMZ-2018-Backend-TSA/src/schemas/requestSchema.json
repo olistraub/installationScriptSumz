@@ -1,0 +1,82 @@
+ {
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "Schema for Time Series Analysis Request",
+    "required": [
+	  "values",
+      "predSteps"
+   ],
+   "properties": {
+		"values": {
+            "$id": "#/properties/values",
+             "type": "array",
+             "title": "The Values Schema",
+			 "minItems": 2,
+             "items": {
+               "$id": "#/properties/values/items",
+               "type": "number",
+			   "minimum": 0,
+               "title": "The Items Schema",
+               "default": 0,
+               "examples": [
+					30,
+					40,
+					50,
+					60,
+					70
+               ]
+            }
+        },
+		"predSteps": {
+			"$id": "#/properties/predSteps",
+			"type": "integer",
+			"title": "The Predsteps Schema",
+			"default": 0,
+			"minimum": 1,
+			"maximum": 20,
+			"examples": [
+				5
+			]
+		},
+		"order": {
+			"$id": "#/properties/order",
+            "type": "array",
+            "title": "The Order Schema",
+			"minItems": 3,
+			"maxItems": 3,
+            "items": {
+				"$id": "#/properties/order/items",
+				"type": "integer",
+				"minimum": 0,
+				"title": "The Items Schema",
+				"default": 0,
+				"examples": [
+					1,
+					0,
+					0
+				]
+            }
+		},
+		"seasonalOrder": {
+			"$id": "#/properties/seasonalOrder",
+            "type": "array",
+            "title": "The SeasonalOrder Schema",
+			"minItems": 4,
+			"maxItems": 4,
+            "items": {
+				"$id": "#/properties/seasonalOrder/items",
+				"type": "integer",
+				"minimum": 0,
+				"title": "The Items Schema",
+				"default": 0,
+				"examples": [
+					0,
+					1,
+					1,
+					4
+				]
+            }
+		}
+   }
+ }
