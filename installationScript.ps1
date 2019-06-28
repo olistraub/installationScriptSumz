@@ -188,7 +188,9 @@ function installPythonBackend(){
 
     New-Website -Name "Backend-Python" -Port 5000 -PhysicalPath $env:HOMEDRIVE\inetpub\wwwroot\SUMZ-2018-Backend-TSA\src
 
-    New-WebHandler -Name "FastCgi" -PSPath "IIS:\Sites\Backend-Python" -Path "*" -Modules "FastCgiModule" -ScriptProcessor "$($pythonPath)|c:\inetpub\wwwroot\wfastcgi.py"  -ResourceType Unspecified -Verb *
+    Add-Webconfiguration 'system.webserver/fastcgi' -value @{'fullPath' = $pythonPath; 'arguments' = "$($env:HOMEDRIVE)\inetpub\wwwroot\wfastcgi.py"}
+
+    New-WebHandler -Name "FastCgi" -PSPath "IIS:\Sites\Backend-Python" -Path "*" -Modules "FastCgiModule" -ScriptProcessor "$($pythonPath)|$($env:HOMEDRIVE)\inetpub\wwwroot\wfastcgi.py"  -ResourceType Unspecified -Verb *
 
     Write-Host "Webseite erstellt. Installation des Python-Backends abgeschlossen"
 
