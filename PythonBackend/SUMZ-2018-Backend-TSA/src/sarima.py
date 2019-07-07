@@ -6,21 +6,15 @@ from scipy.stats import norm
 
 #created by Fabian Wallisch WWI16
 
-def predict(timeSeriesValues, pred_steps, **kwargs):
+def predict(timeSeriesValues, pred_steps, order, **kwargs):
     
-    order = kwargs.get('order', None)
     seasonal_order = kwargs.get('seasonal_order', None)
     
     #define the sarimax model; last param of seasonal order is frequency, e.g. 12=monthly
-    #TODO: use AIC criterion
-    if order is None and seasonal_order is None:
-        model = SARIMAX(timeSeriesValues, enforce_stationarity=False, enforce_invertibility=False)
-    if order is None and seasonal_order is not None:
-        model = SARIMAX(timeSeriesValues, seasonal_order=seasonal_order, enforce_stationarity=False, enforce_invertibility=False)
-    if order is not None and seasonal_order is None:
-        model = SARIMAX(timeSeriesValues, order=order, enforce_stationarity=False, enforce_invertibility=False)
-    if order is not None and seasonal_order is not None:
-        model = SARIMAX(timeSeriesValues, order=order, seasonal_order=seasonal_order, enforce_stationarity=False, enforce_invertibility=False)
+    if seasonal_order is None:
+        model = SARIMAX(timeSeriesValues, order=order, enforce_stationarity=False, enforce_invertibility=False, trend='c')
+    if seasonal_order is not None:
+        model = SARIMAX(timeSeriesValues, order=order, seasonal_order=seasonal_order, enforce_stationarity=False, enforce_invertibility=False, trend='c')
     
     #alternative arima method 
     #model = pmdarima.arima.ARIMA(timeSeriesValues, order=order, seasonal_order=seasonalOrder, with_intercept=True)
